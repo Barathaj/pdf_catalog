@@ -5,3 +5,5 @@ pandas
 pillow
 openai==1.37.1
 xlsxwriter
+fitz
+frontend
