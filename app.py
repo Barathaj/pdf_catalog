@@ -35,7 +35,7 @@ def extract_images_from_pdf(uploaded_file, output_folder):
     for page_num in range(pdf_document.page_count):
         page = pdf_document[page_num]
         image_list = page.get_images(full=True)
-        
+        st.write("image list",image_list)
         # Process images as needed
         for img_index, img in enumerate(image_list):
             xref = img[0]
