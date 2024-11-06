@@ -24,30 +24,13 @@ def extract_text_from_pdf(pdf_path):
     return text
 
 def extract_images_from_pdf(pdf_path, output_folder):
-    # Open the PDF file
-    result=[]
-    pdf_document = fitz.Document(stream=uploaded_file.read(), filetype="pdf")
-
-    # Loop through each page
-    for page_num in range(pdf_document.page_count):
-        page = pdf_document[page_num]
-        image_list = page.get_images(full=True)
-
-        # Loop through each image on the page
-        for img_index, img in enumerate(image_list):
-            # Extract image ID and retrieve the image
-            xref = img[0]
-            base_image = pdf_document.extract_image(xref)
-            image_bytes = base_image["image"]
-
-            # Load it into PIL for saving
-            image = Image.open(io.BytesIO(image_bytes))
-            image_path = f"{output_folder}/page_{page_num+1}_img_{img_index+1}.png"
-            image.save(image_path)
-            result.append(image_path)
-
-    pdf_document.close()
-    return result
+    images = []
+    doc = fitz.open(stream=pdf_path.read(), filetype="pdf")
+    for page_num in range(len(doc)):
+        page = doc.load_page(page_num)
+        images += page.get_images(full=True)
+    st.write(images)
+    return images
 
 
 # Streamlit App layout
