@@ -6,6 +6,7 @@ import io
 from PIL import Image
 import json
 import re
+import os
 from openai import AzureOpenAI
 
 client = AzureOpenAI(
