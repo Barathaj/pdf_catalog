@@ -26,7 +26,7 @@ def extract_text_from_pdf(pdf_path):
 def extract_images_from_pdf(pdf_path, output_folder):
     # Open the PDF file
     result=[]
-    pdf_document = fitz.open(pdf_path.read())
+    pdf_document = fitz.open(pdf_path)
 
     # Loop through each page
     for page_num in range(pdf_document.page_count):
