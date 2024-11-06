@@ -44,9 +44,8 @@ def extract_images_from_pdf(uploaded_file, output_folder):
             img_path = f"{output_folder}/image_page{page_num+1}_img{img_index+1}.png"
             
             # Save image to the specified output folder
-            with open(img_path, "wb") as img_file:
-                img_file.write(img_data)
-            
+            image.save(img_path)
+            st.write(img_path)
             result.append(img_path)
     
     pdf_document.close()
