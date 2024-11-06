@@ -1,9 +1,10 @@
 streamlit
 pdfplumber
-PyMuPDF
+PyMuPDF==1.24.13
 pandas
 pillow
 openai==1.37.1
+fitz==0.0.1.dev2
 xlsxwriter
 frontend
 tools
