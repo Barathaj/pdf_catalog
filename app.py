@@ -77,7 +77,9 @@ if uploaded_file:
     if st.button("Submit"):
         # Process PDF
         pdf_text = extract_text_from_pdf(uploaded_file)
-        output_folder = r"E:\intern\adya\prompt_testing\static"  # Temporary folder for images
+        output_folder = "static"
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
         res_image = extract_images_from_pdf(uploaded_file, output_folder)
 
         # Append image paths to text
