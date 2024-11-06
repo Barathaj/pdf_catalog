@@ -82,7 +82,6 @@ if uploaded_file:
         output_folder = "static"
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
-        st.write(output_folder)
         # res_image = extract_images_from_pdf(uploaded_file)
 
         # # Append image paths to text
