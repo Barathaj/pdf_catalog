@@ -84,6 +84,8 @@ if uploaded_file:
         res_image = extract_images_from_pdf(uploaded_file, output_folder)
 
         # Append image paths to text
+        st.write(res_image)
+        st.write("Images")
         for img in res_image:
             pdf_text += f"\nFront Image Link: {img}"
             st.write(img)
