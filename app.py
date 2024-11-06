@@ -82,7 +82,8 @@ if uploaded_file:
 
         # Append image paths to text
         for img in res_image:
-            pdf_text += f"\nImage Link: {img}"
+            pdf_text += f"\nFront Image Link: {img}"
+            st.write(img)
         
         # Mock function to simulate OpenAI API processing
         def mock_openai_process(pdf_text):
