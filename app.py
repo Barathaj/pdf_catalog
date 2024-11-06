@@ -83,14 +83,14 @@ if uploaded_file:
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
         st.write(output_folder)
-        res_image = extract_images_from_pdf(uploaded_file)
+        # res_image = extract_images_from_pdf(uploaded_file)
 
-        # Append image paths to text
-        st.write(res_image)
-        st.write("Images")
-        for img in res_image:
-            pdf_text += f"\nFront Image Link: {img}"
-            st.write(img)
+        # # Append image paths to text
+        # st.write(res_image)
+        # st.write("Images")
+        # for img in res_image:
+        #     pdf_text += f"\nFront Image Link: {img}"
+        #     st.write(img)
         
         # Mock function to simulate OpenAI API processing
         def mock_openai_process(pdf_text):
