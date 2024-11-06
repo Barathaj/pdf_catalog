@@ -22,22 +22,35 @@ def extract_text_from_pdf(pdf_path):
             text += page.extract_text()
     return text
 
-def extract_images_from_pdf(pdf_path, output_folder):
+import fitz  # PyMuPDF
+
+# Update the extract_images_from_pdf function
+def extract_images_from_pdf(uploaded_file, output_folder):
     result = []
-    pdf_document = fitz.open(pdf_path)
+    
+    # Open the PDF directly from the uploaded file object
+    pdf_document = fitz.open("pdf", uploaded_file.read())
+    
     for page_num in range(pdf_document.page_count):
         page = pdf_document[page_num]
         image_list = page.get_images(full=True)
+        
+        # Process images as needed
         for img_index, img in enumerate(image_list):
             xref = img[0]
             base_image = pdf_document.extract_image(xref)
-            image_bytes = base_image["image"]
-            image = Image.open(io.BytesIO(image_bytes))
-            image_path = f"{output_folder}/page_{page_num+1}_img_{img_index+1}.png"
-            image.save(image_path)
-            result.append(image_path)
+            img_data = base_image["image"]
+            img_path = f"{output_folder}/image_page{page_num+1}_img{img_index+1}.png"
+            
+            # Save image to the specified output folder
+            with open(img_path, "wb") as img_file:
+                img_file.write(img_data)
+            
+            result.append(img_path)
+    
     pdf_document.close()
     return result
+
 
 # Streamlit App layout
 st.set_page_config(page_title="Catalog PDF Extractor", layout="wide")
