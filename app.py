@@ -23,33 +23,29 @@ def extract_text_from_pdf(pdf_path):
             text += page.extract_text()
     return text
 
-def extract_images_from_pdf(uploaded_file, output_folder):
-    result = []
-    
-    # Open the PDF directly from the uploaded file object
-    pdf_document = fitz.open("pdf", uploaded_file.read())
-    
+def extract_images_from_pdf(pdf_path, output_folder):
+    # Open the PDF file
+    result=[]
+    pdf_document = fitz.open(pdf_path.read())
+
+    # Loop through each page
     for page_num in range(pdf_document.page_count):
         page = pdf_document[page_num]
         image_list = page.get_images(full=True)
-        
-        # Check if there are any images on the page
-        if image_list:
-            for img_index, img in enumerate(image_list):
-                xref = img[0]
-                base_image = pdf_document.extract_image(xref)
-                img_data = base_image["image"]
 
-                # Convert the raw image data to an Image object
-                image = Image.open(io.BytesIO(img_data))
-                
-                # Save the image to the specified output folder
-                img_path = f"{output_folder}/image_page{page_num+1}_img{img_index+1}.png"
-                image.save(img_path, format="PNG")
-                
-                # Append the image path to the result list
-                result.append(img_path)
-    
+        # Loop through each image on the page
+        for img_index, img in enumerate(image_list):
+            # Extract image ID and retrieve the image
+            xref = img[0]
+            base_image = pdf_document.extract_image(xref)
+            image_bytes = base_image["image"]
+
+            # Load it into PIL for saving
+            image = Image.open(io.BytesIO(image_bytes))
+            image_path = f"{output_folder}/page_{page_num+1}_img_{img_index+1}.png"
+            image.save(image_path)
+            result.append(image_path)
+
     pdf_document.close()
     return result
 
