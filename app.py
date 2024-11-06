@@ -23,9 +23,6 @@ def extract_text_from_pdf(pdf_path):
             text += page.extract_text()
     return text
 
-import fitz  # PyMuPDF
-
-# Update the extract_images_from_pdf function
 def extract_images_from_pdf(uploaded_file, output_folder):
     result = []
     
@@ -35,18 +32,23 @@ def extract_images_from_pdf(uploaded_file, output_folder):
     for page_num in range(pdf_document.page_count):
         page = pdf_document[page_num]
         image_list = page.get_images(full=True)
-        st.write("image list",image_list)
-        # Process images as needed
-        for img_index, img in enumerate(image_list):
-            xref = img[0]
-            base_image = pdf_document.extract_image(xref)
-            img_data = base_image["image"]
-            img_path = f"{output_folder}/image_page{page_num+1}_img{img_index+1}.png"
-            
-            # Save image to the specified output folder
-            image.save(img_path)
-            st.write(img_path)
-            result.append(img_path)
+        
+        # Check if there are any images on the page
+        if image_list:
+            for img_index, img in enumerate(image_list):
+                xref = img[0]
+                base_image = pdf_document.extract_image(xref)
+                img_data = base_image["image"]
+
+                # Convert the raw image data to an Image object
+                image = Image.open(io.BytesIO(img_data))
+                
+                # Save the image to the specified output folder
+                img_path = f"{output_folder}/image_page{page_num+1}_img{img_index+1}.png"
+                image.save(img_path, format="PNG")
+                
+                # Append the image path to the result list
+                result.append(img_path)
     
     pdf_document.close()
     return result
@@ -80,6 +82,7 @@ if uploaded_file:
         output_folder = "static"
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
+        st.write(output_folder)
         res_image = extract_images_from_pdf(uploaded_file, output_folder)
 
         # Append image paths to text
