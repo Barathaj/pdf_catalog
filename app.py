@@ -24,7 +24,7 @@ def extract_text_from_pdf(pdf_path):
     return text
 def extract_images_from_pdf(pdf_path, output_folder):
     result = []
-    pdf_document = fitz.open(stream=uploaded_file.read(), filetype="pdf")
+    pdf_document = fitz.open(stream=pdf_path.read(), filetype="pdf")
     for page_num in range(pdf_document.page_count):
         page = pdf_document[page_num]
         image_list = page.get_images(full=True)
