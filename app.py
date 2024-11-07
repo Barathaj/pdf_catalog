@@ -85,7 +85,7 @@ if uploaded_file:
                       st.markdown(f"[Download {image_path.split('/')[-1]}](file://{image_path})", unsafe_allow_html=True)
 
         # # Append image paths to text
-        st.write(res_image)
+        # st.write(res_image)
         # st.write("Images")
         # for img in res_image:
         #     pdf_text += f"\nFront Image Link: {img}"
