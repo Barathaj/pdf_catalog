@@ -22,22 +22,37 @@ def extract_text_from_pdf(pdf_path):
         for page in pdf.pages:
             text += page.extract_text()
     return text
-def extract_images_from_pdf(pdf_path, output_folder):
-    result = []
-    pdf_document = fitz.open(stream=pdf_path.read(), filetype="pdf")
-    for page_num in range(pdf_document.page_count):
-        page = pdf_document[page_num]
-        image_list = page.get_images(full=True)
-        for img_index, img in enumerate(image_list):
+
+@st.cache_resource
+def get_images_from_pdf(pdf_file, verbose: bool = False) -> list:
+    # iterate over pdf pages
+    image_list_container = []
+    for page_index in range(len(pdf_file)):
+        # get the page itself
+        page = pdf_file[page_index]
+        image_list = page.get_images()
+        # printing number of images found in this page
+        if image_list:
+            if verbose:
+                print(f"[+] Found a total of {len(image_list)} images in page {page_index}")
+        else:
+            if verbose:
+                print("[!] No images found on page", page_index)
+        for image_index, img in enumerate(page.get_images(), start=1):
+            # get the XREF of the image
             xref = img[0]
-            base_image = pdf_document.extract_image(xref)
+            # extract the image bytes
+            base_image = pdf_file.extract_image(xref)
             image_bytes = base_image["image"]
+            # get the image extension
+            image_ext = base_image["ext"]
+            # load it to PIL
             image = Image.open(io.BytesIO(image_bytes))
-            image_path = f"{output_folder}/page_{page_num+1}_img_{img_index+1}.png"
-            image.save(image_path)
-            result.append(image_path)
-    pdf_document.close()
-    return result
+            filename = f"image_{page_index+1}_{image_index}.{image_ext}"
+            image_list_container.append((image_bytes, image, filename))
+
+    pdf_file.close()
+    return image_list_container
 
 
 # Streamlit App layout
@@ -71,7 +86,7 @@ if uploaded_file:
         output_folder = "static"
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
-        res_image = extract_images_from_pdf(uploaded_file,output_folder)
+        res_image = get_images_from_pdf(doc,verbose=False)
 
         # # Append image paths to text
         st.write(res_image)
