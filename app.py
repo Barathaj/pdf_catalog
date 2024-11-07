@@ -67,6 +67,7 @@ if uploaded_file:
         pdf_text = extract_text_from_pdf(uploaded_file)
         if uploaded_file is not None:
             doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
+            st.write(doc)
         output_folder = "static"
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
