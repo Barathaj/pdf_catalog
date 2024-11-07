@@ -26,6 +26,7 @@ def extract_text_from_pdf(pdf_path):
 
 def extract_images_from_pdf(pdf_file, output_folder):
     pdf_document = fitz.open(stream=pdf_file.read(), filetype="pdf")
+    st.write(pdf_document)
     image_paths = []
     
     # Process each page for images
@@ -75,14 +76,15 @@ if uploaded_file:
         pdf_text = extract_text_from_pdf(uploaded_file)
         if uploaded_file is not None:
     # Create a temporary directory for storing images
-              with tempfile.TemporaryDirectory() as temp_dir:
+            with tempfile.TemporaryDirectory() as temp_dir:
                   # Extract images from the PDF
-                  image_paths = extract_images_from_pdf(uploaded_file, temp_dir)
+                image_paths = extract_images_from_pdf(uploaded_file, temp_dir)
                   
                   # Display and provide download links for each image
-                  for image_path in image_paths:
-                      st.image(image_path)
-                      st.markdown(f"[Download {image_path.split('/')[-1]}](file://{image_path})", unsafe_allow_html=True)
+                st.write(image_paths)
+                for image_path in image_paths:
+                    st.image(image_path)
+                    st.markdown(f"[Download {image_path.split('/')[-1]}](file://{image_path})", unsafe_allow_html=True)
 
         # # Append image paths to text
         # st.write(res_image)
