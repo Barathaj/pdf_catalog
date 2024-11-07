@@ -23,8 +23,8 @@ def extract_text_from_pdf(pdf_path):
             text += page.extract_text()
     return text
 
-def extract_images_from_pdf(pdf_path):
-    doc = fitz.open(stream=pdf_path.read(), filetype="pdf")
+def get_images_from_pdf(pdf_file, verbose: bool = False) -> list:
+    # iterate over pdf pages
     image_list_container = []
     for page_index in range(len(pdf_file)):
         # get the page itself
@@ -73,19 +73,20 @@ with col2:
     )
 
 # File uploader
-uploaded_file = st.file_uploader("Upload Catalog PDF", type=["pdf"])
+uploaded_file = st.file_uploader(label="PDF Upload", key="pdf-upload", type=['pdf'], label_visibility="hidden")
 
 if uploaded_file:
     if st.button("Submit"):
         # Process PDF
         pdf_text = extract_text_from_pdf(uploaded_file)
+        doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
         output_folder = "static"
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
-        # res_image = extract_images_from_pdf(uploaded_file)
+        res_image = extract_images_from_pdf(doc,verbose=False)
 
         # # Append image paths to text
-        # st.write(res_image)
+        st.write(res_image)
         # st.write("Images")
         # for img in res_image:
         #     pdf_text += f"\nFront Image Link: {img}"
