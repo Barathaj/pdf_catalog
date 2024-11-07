@@ -68,32 +68,22 @@ with col2:
     )
 
 # File uploader
-uploaded_file = st.file_uploader(label="PDF Upload", key="pdf-upload", type=['pdf'], label_visibility="hidden")
+uploaded_file = st.file_uploader("Upload a PDF", type=["pdf"])
 
 if uploaded_file:
     if st.button("Submit"):
-        # Process PDF
-        pdf_text = extract_text_from_pdf(uploaded_file)
         if uploaded_file is not None:
     # Create a temporary directory for storing images
             with tempfile.TemporaryDirectory() as temp_dir:
-                  # Extract images from the PDF
+                # Extract images from the PDF
                 image_paths = extract_images_from_pdf(uploaded_file, temp_dir)
-                  
-                  # Display and provide download links for each image
-                st.write(image_paths)
+                
+                # Display and provide download links for each image
                 for image_path in image_paths:
                     st.image(image_path)
                     st.markdown(f"[Download {image_path.split('/')[-1]}](file://{image_path})", unsafe_allow_html=True)
-
-        # # Append image paths to text
-        # st.write(res_image)
-        # st.write("Images")
-        # for img in res_image:
-        #     pdf_text += f"\nFront Image Link: {img}"
-        #     st.write(img)
+                pdf_text = extract_text_from_pdf(uploaded_file)
         
-        # Mock function to simulate OpenAI API processing
         def mock_openai_process(pdf_text):
             messages = [
                 {"role": "system", "content": "You are an expert AI assistant."},
