@@ -79,7 +79,8 @@ if uploaded_file:
     if st.button("Submit"):
         # Process PDF
         pdf_text = extract_text_from_pdf(uploaded_file)
-        doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
+        if uploaded_file is not None:
+            doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
         output_folder = "static"
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
