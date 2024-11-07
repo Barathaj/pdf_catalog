@@ -26,7 +26,6 @@ def extract_text_from_pdf(pdf_path):
 
 def extract_images_from_pdf(pdf_file, output_folder):
     pdf_document = fitz.open(stream=pdf_file.read(), filetype="pdf")
-    st.write(pdf_document)
     image_paths = []
     
     # Process each page for images
