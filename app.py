@@ -1,6 +1,7 @@
 import streamlit as st
 import pdfplumber
 import fitz
+import tempfile
 import pandas as pd
 import io
 from PIL import Image
@@ -23,36 +24,28 @@ def extract_text_from_pdf(pdf_path):
             text += page.extract_text()
     return text
 
-@st.cache_resource
-def get_images_from_pdf(pdf_file, verbose: bool = False) -> list:
-    # iterate over pdf pages
-    image_list_container = []
-    for page_index in range(len(pdf_file)):
-        # get the page itself
-        page = pdf_file[page_index]
-        image_list = page.get_images()
-        # printing number of images found in this page
-        if image_list:
-            if verbose:
-                print(f"[+] Found a total of {len(image_list)} images in page {page_index}")
-        else:
-            if verbose:
-                print("[!] No images found on page", page_index)
-        for image_index, img in enumerate(page.get_images(), start=1):
-            # get the XREF of the image
+def extract_images_from_pdf(pdf_file, output_folder):
+    pdf_document = fitz.open(stream=pdf_file.read(), filetype="pdf")
+    image_paths = []
+    
+    # Process each page for images
+    for page_num in range(len(pdf_document)):
+        page = pdf_document[page_num]
+        images = page.get_images(full=True)
+        
+        for i, img in enumerate(images):
             xref = img[0]
-            # extract the image bytes
-            base_image = pdf_file.extract_image(xref)
+            base_image = pdf_document.extract_image(xref)
             image_bytes = base_image["image"]
-            # get the image extension
-            image_ext = base_image["ext"]
-            # load it to PIL
-            image = Image.open(io.BytesIO(image_bytes))
-            filename = f"image_{page_index+1}_{image_index}.{image_ext}"
-            image_list_container.append((image_bytes, image, filename))
+            
+            # Save image to the output folder
+            image_path = f"{output_folder}/page_{page_num+1}_img_{i+1}.png"
+            with open(image_path, "wb") as img_file:
+                img_file.write(image_bytes)
+            image_paths.append(image_path)
 
-    pdf_file.close()
-    return image_list_container
+    pdf_document.close()
+    return image_paths
 
 
 # Streamlit App layout
@@ -81,12 +74,15 @@ if uploaded_file:
         # Process PDF
         pdf_text = extract_text_from_pdf(uploaded_file)
         if uploaded_file is not None:
-            doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
-            st.write(doc)
-        output_folder = "static"
-        if not os.path.exists(output_folder):
-            os.makedirs(output_folder)
-        res_image = get_images_from_pdf(doc,verbose=False)
+    # Create a temporary directory for storing images
+              with tempfile.TemporaryDirectory() as temp_dir:
+                  # Extract images from the PDF
+                  image_paths = extract_images_from_pdf(uploaded_file, temp_dir)
+                  
+                  # Display and provide download links for each image
+                  for image_path in image_paths:
+                      st.image(image_path)
+                      st.markdown(f"[Download {image_path.split('/')[-1]}](file://{image_path})", unsafe_allow_html=True)
 
         # # Append image paths to text
         st.write(res_image)
