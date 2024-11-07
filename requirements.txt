@@ -1,6 +1,6 @@
 streamlit
 pdfplumber
-PyMuPDF==1.24.13
+PyMuPDF
 pandas
 pillow
 openai==1.37.1
